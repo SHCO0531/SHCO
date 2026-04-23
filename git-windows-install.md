@@ -75,7 +75,66 @@ git remote add origin https://github.com/username/repository.git
 git push -u origin main
 ```
 
-## 6. 문제 해결
+## 6. Claude Code 연동 설정
+
+Claude Code를 Windows에서 사용할 때 Git Bash(`bash.exe`)를 인식시키려면
+`CLAUDE_CODE_GIT_BASH_PATH` 환경 변수를 `bash.exe`의 전체 경로로 설정해야 합니다.
+
+### 6.1 bash.exe 경로 확인
+
+Git for Windows 설치 시 기본 경로:
+
+```
+C:\Program Files\Git\bin\bash.exe
+```
+
+PowerShell에서 경로 확인:
+```powershell
+where.exe bash
+```
+
+### 6.2 환경 변수 설정 방법
+
+#### 방법 A: 시스템 환경 변수 (영구 설정, 권장)
+
+1. `Win + R` → `sysdm.cpl` 입력 후 Enter
+2. **고급** 탭 → **환경 변수** 클릭
+3. **시스템 변수** 영역에서 **새로 만들기** 클릭
+4. 변수 이름: `CLAUDE_CODE_GIT_BASH_PATH`
+5. 변수 값: `C:\Program Files\Git\bin\bash.exe`
+6. **확인** 클릭 후 터미널 재시작
+
+#### 방법 B: PowerShell에서 설정 (현재 세션)
+
+```powershell
+$env:CLAUDE_CODE_GIT_BASH_PATH = "C:\Program Files\Git\bin\bash.exe"
+```
+
+#### 방법 C: PowerShell 프로파일에 영구 추가
+
+```powershell
+Add-Content $PROFILE "`n`$env:CLAUDE_CODE_GIT_BASH_PATH = `"C:\Program Files\Git\bin\bash.exe`""
+```
+
+#### 방법 D: 명령 프롬프트(cmd)에서 영구 설정
+
+```cmd
+setx CLAUDE_CODE_GIT_BASH_PATH "C:\Program Files\Git\bin\bash.exe"
+```
+
+### 6.3 설정 확인
+
+PowerShell에서 환경 변수가 올바르게 설정되었는지 확인합니다.
+
+```powershell
+echo $env:CLAUDE_CODE_GIT_BASH_PATH
+# 출력: C:\Program Files\Git\bin\bash.exe
+```
+
+> **참고:** 설치 경로가 다를 경우 실제 경로로 대체하세요.  
+> 예: `D:\Git\bin\bash.exe`
+
+## 7. 문제 해결
 
 ### 한글 파일명 깨짐
 ```bash
