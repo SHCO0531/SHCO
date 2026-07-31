@@ -4,6 +4,70 @@
 
 ---
 
+## Claude Code 데스크톱 앱에서 "Git 설치" 팝업이 뜰 때
+
+Windows용 Claude Code 앱은 Bash 도구를 쓰기 위해 **Git for Windows 의 `bash.exe`** 를 필요로 합니다.
+찾지 못하면 아래 팝업이 뜹니다.
+
+> 로컬 세션을 실행하려면 Git for Windows가 필요합니다. 이미 설치되어 있다면
+> `CLAUDE_CODE_GIT_BASH_PATH` 환경 변수를 bash.exe의 전체 경로로 설정하고 앱을 다시 시작하거나,
+> 원격 환경으로 전환하세요.
+
+### 한 번에 해결하기
+
+이 저장소의 `setup-claude-windows.ps1` 을 실행하면 설치·경로 탐지·환경 변수 설정·검증까지 한 번에 됩니다.
+**관리자 권한은 필요 없습니다.**
+
+PowerShell을 열고 저장소 폴더에서:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\setup-claude-windows.ps1
+```
+
+끝나면 **Claude Code 앱을 완전히 종료했다가 다시 켜세요.** 창만 닫으면 반영되지 않습니다.
+작업 표시줄 오른쪽 트레이 아이콘을 우클릭해 종료한 뒤 실행해야 환경 변수를 새로 읽습니다.
+
+> `-ExecutionPolicy Bypass` 는 이 스크립트 한 번만 실행 정책을 우회합니다.
+> 시스템 설정을 바꾸지 않습니다.
+
+### 직접 하고 싶다면
+
+```powershell
+# 1. bash.exe 가 이미 있는지 확인
+where.exe bash
+
+# 2. 없으면 설치
+winget install --id Git.Git -e --source winget
+
+# 3. 경로 지정 (기본 설치 경로 기준)
+setx CLAUDE_CODE_GIT_BASH_PATH "C:\Program Files\Git\bin\bash.exe"
+```
+
+⚠️ `usr\bin\bash.exe` 가 아니라 **`bin\bash.exe`** 입니다. 자주 틀리는 부분입니다.
+사용자 단위로 설치했다면 경로가 `%LOCALAPPDATA%\Programs\Git\bin\bash.exe` 일 수 있으니
+1번 명령의 결과를 그대로 쓰세요.
+
+### 환경 변수 대신 설정 파일로
+
+`%USERPROFILE%\.claude\settings.json` 에 넣어도 됩니다. 파일이 이미 있다면 `env` 항목만 합치세요.
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
+  }
+}
+```
+
+JSON이라 역슬래시를 두 번 씁니다.
+
+### 참고
+
+Git을 설치하지 않아도 앱은 동작합니다. 대신 Bash 대신 **PowerShell** 로 명령을 실행합니다.
+팝업의 "원격 환경으로 전환"은 클라우드 컨테이너에서 실행하는 방식으로, 이 경우 내 PC에 Git이 없어도 됩니다.
+
+---
+
 ## Windows에서 로컬 개발 환경 만들기
 
 아래 순서대로 따라 하면 내 PC에서 이 저장소를 받아 수정하고 다시 올릴 수 있습니다.
